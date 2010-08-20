@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMap      
+    PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"      
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="Role">
+
+	<typeAlias alias="role" type="cn.nchu.rbac.po.Role" />
+	<typeAlias alias="page" type="cn.nchu.rbac.base.Page" />
+
+	<parameterMap class="role" id="role_info">
+		 <parameter property="id" javaType="long" jdbcType="NUMERIC" />
+		<parameter property="role_name" javaType="string" jdbcType="VARCHAR" />
+		<parameter property="create_time" javaType="date" jdbcType="DATETIME" />
+		<parameter property="isvalid" javaType="int" jdbcType="INT" />
+	</parameterMap>
+	
+  <!-- 增加一个用户 -->
+	<insert id="save" parameterMap="role_info">
+		<![CDATA[
+			INSERT INTO trole 
+						(id,role_name,create_time,isvalid) 
+				     VALUES (?,?,?,?)
+		
+		]]>
+	
+
+	<!-- 根据ID号删除用户 -->
+	<delete id="deleteById" parameterClass="long">
+		<![CDATA[
+			delete trole
+		]]>
+		<dynamic prepend="WHERE">
+			id = #id#
+        </dynamic>
+	</delete>
+	
+	<!-- 更新用户信息 -->
+	<update id="update" parameterClass="role">
+		<![CDATA[
+			UPDATE trole
+		]]>
+		<dynamic prepend="SET">
+			<isNotNull property="id" prepend=",">
+				<![CDATA[
+					id = #id:NUMERIC#
+				]]>
+			</isNotNull>
+			<isNotNull property="role_name" prepend=",">
+				<![CDATA[
+					role_name = #role_name:VARCHAR#
+				]]>
+			</isNotNull>
+			<isNotNull property="create_time" prepend=",">
+				<![CDATA[
+					create_time = #create_time:DATETIME#
+				]]>
+			</isNotNull>
+			<isNotNull property="isvalid" prepend=",">
+				<![CDATA[
+					isvalid = #isvalid:NUMBER#
+				]]>
+			</isNotNull>
+			</dynamic>
+		<dynamic prepend="WHERE">
+			id = #id:NUMERIC#
+		</dynamic>
+	</update>
+	
+	
+	
+
+	<sql id="findUserByPageCondition">
+		<isNotEmpty property="conditions">
+			<iterate property="conditions" open="(" close=")" conjunction="OR">
+				<![CDATA[
+					upper(id) LIKE '%' + upper(#conditions[]:NUMERIC#) + '%'
+				    OR upper(role_name) LIKE '%' + upper(#conditions[]:VARCHAR#) + '%'    
+				    OR upper(create_time) LIKE '%' + upper(#conditions[]:DATETIME#) + '%'    
+				    OR upper(isvalid) LIKE '%' + upper(#conditions[]:NUMBER#) + '%'    
+				]]>
+			</iterate>
+		</isNotEmpty>
+	</sql>
+	
+	<select id="findByPage" parameterClass="page" resultClass="role">
+		<![CDATA[
+			SELECT TOP $limit$ * FROM trole 
+					WHERE (id >= (SELECT MAX(id) FROM (SELECT TOP $start$ id FROM trole 
+		]]>
+		<dynamic prepend="WHERE">
+			<include refid="findUserByPageCondition" />
+		</dynamic>
+		<![CDATA[
+			ORDER BY id) AS T)) 
+		]]>
+		<dynamic prepend="AND">
+			<include refid="findUserByPageCondition" />
+		</dynamic>
+		<![CDATA[
+			ORDER BY id
+		]]>
+	</select>
+
+	<select id="findByCond" parameterClass="page" resultClass="int">
+		<![CDATA[
+			SELECT COUNT(*) FROM trole 
+		]]>
+		<dynamic prepend="WHERE">
+			<include refid="findUserByPageCondition" />
+		</dynamic>
+	</select>
+	
+	<select id="findBySelect" parameterClass="role" resultClass="role">
+		<![CDATA[
+			SELECT * FROM trole 
+		]]>
+		<dynamic prepend="WHERE">
+			<isNotNull property="id" prepend="AND">
+				id = #id:NUMERIC#
+			</isNotNull>
+			<isNotNull property="role_name" prepend="AND">
+				role_name LIKE '%' + #role_name:VARCHAR# + '%'
+			</isNotNull>
+			<isNotNull property="create_time" prepend="AND">
+				create_time LIKE '%' + #create_time:DATETIME# + '%'
+			</isNotNull>
+			<isNotNull property="isvalid" prepend="AND">
+				isvalid = #isvalid:NUMBER#
+			</isNotNull>
+			
+		</dynamic>
+	</select>
+</sqlMap>
