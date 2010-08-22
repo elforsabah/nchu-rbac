@@ -1,0 +1,23 @@
+[{
+    text:'业务模块',
+    children:[{
+    	text: '业务1',
+    	leaf: true
+    }]
+}, {
+	text: '权限管理',
+	expanded: true,
+	children: [{
+    	text:'用户管理',
+    	id:'myuser-manage',
+    	leaf:true
+    },{
+		text: '权限管理',
+		id: 'perm-manage',
+		leaf: true
+	},{
+		text: '角色管理',
+		id: 'role-manage',
+		leaf: true
+	}]
+}]
