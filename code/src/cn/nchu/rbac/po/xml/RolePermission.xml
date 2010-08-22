@@ -7,12 +7,14 @@
 <sqlMap namespace="RolePermission">
 
 	<typeAlias alias="rolePermission" type="cn.nchu.rbac.po.RolePermission" />
-	<typeAlias alias="page" type="cn.nchu.rbacbase.Page" />
+	<typeAlias alias="page" type="cn.nchu.rbac.util.Page" />
 
 	<parameterMap class="rolePermission" id="RolePermission_info">
 		<parameter property="id" javaType="long" jdbcType="NUMERIC" />
-		<parameter property="role_id" javaType="long" jdbcType="NUMERIC" />
-		<parameter property="perm_id" javaType="long" jdbcType="NUMERIC" />
+		<parameter property="roleId" javaType="long" jdbcType="NUMERIC" />
+		<parameter property="permId" javaType="long" jdbcType="NUMERIC" />
+		<parameter property="permName" javaType="string" jdbcType="VARCHAR" />
+		<parameter property="url" javaType="string" jdbcType="VARCHAR" />
 		
 	</parameterMap>
 	<sql id="byRolePerIdCondition">
@@ -24,52 +26,25 @@
 	<insert id="save" parameterMap="RolePermission_info">
 		<![CDATA[
 			INSERT INTO trole_permission
-						(id,role_id,perm_id) 
-				 VALUES (?,?,?)
+						(roleId, permId) 
+				 VALUES (?,?)
 		]]>
+		
+		<selectKey resultClass="long">
+			<![CDATA[
+				SELECT @@IDENTITY AS ID
+			]]>
+		</selectKey>
 	</insert>
 
-	<delete id="deleteById" parameterClass="NUMERIC">
+	<delete id="deleteById">
 		<![CDATA[
-			delete trole_permission
+			delete trole_permission where id = #id:NUMERIC#
 		]]>
-		<dynamic prepend="WHERE">
-			<include refid="byRolePerIdCondition" />
-		</dynamic>
 	</delete>
 
-	<update id="update" parameterClass="rolePermission">
-		<![CDATA[
-			UPDATE trole_permission
-		]]>
-		<dynamic prepend="SET">
-			<isNotNull property="id" prepend=",">
-				<![CDATA[
-					id = #id:NUMERIC#
-				]]>
-			</isNotNull>
-			<isNotNull property="role_id" prepend=",">
-				<![CDATA[
-					role_id = #role_id:NUMERIC#
-				]]>
-			</isNotNull>
-			<isNotNull property="perm_id" prepend=",">
-				<![CDATA[
-					perm_id = #perm_id:NUMERIC#
-				]]>
-			</isNotNull>
-			
-		</dynamic>
-		<dynamic prepend="WHERE">
-			<include refid="byRolePerIdCondition" />
-		</dynamic>
-	</update>
 	<sql id="findRolePerByPageCondition">
-		<isNotNull property="objCondition">
-			<![CDATA[
-				id = #objCondition.id:NUMERIC#
-		    ]]>
-		</isNotNull>
+		
 	</sql>
 
 	<select id="findByPage" parameterClass="page" resultClass="rolePermission">
@@ -81,7 +56,7 @@
 			<include refid="findRolePerByPageCondition" />
 		</dynamic>
 		<![CDATA[
-			ORDER BY logId) AS T)) 
+			ORDER BY id) AS T)) 
 		]]>
 		<dynamic prepend="AND">
 			<include refid="findRolePerByPageCondition" />
@@ -91,13 +66,23 @@
 		]]>
 	</select>
 
-	<select id="findByCount" parameterClass="page" resultClass="int">
+	<select id="findByCount" resultClass="int">
 		<![CDATA[
-			SELECT COUNT(*) FROM trole_permission 
+			SELECT COUNT(*) FROM trole_permission rp 
+				INNER JOIN tpermission p ON rp.permId = p.id 
+				WHERE p.isvalid = 1 AND roleId = #roleId:NUMERIC#
 		]]>
 		<dynamic prepend="WHERE">
 			<include refid="findRolePerByPageCondition" />
 		</dynamic>
+	</select>
+	
+	<select id="findPermByRole" resultClass="rolePermission">
+		<![CDATA[
+			SELECT rp.id, permId, roleId, permName, url FROM trole_permission rp 
+				INNER JOIN tpermission p ON rp.permId = p.id 
+				WHERE p.isvalid = 1 AND roleId = #roleId:NUMERIC#
+		]]>
 	</select>
 
 </sqlMap>

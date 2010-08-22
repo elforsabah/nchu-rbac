@@ -2,8 +2,8 @@ package cn.nchu.rbac.service;
 
 import java.util.List;
 
-import cn.nchu.rbac.base.Page;
 import cn.nchu.rbac.po.Role;
+import cn.nchu.rbac.util.Page;
 
 public interface IRoleService {
 	
@@ -12,7 +12,7 @@ public interface IRoleService {
 	 * @param role 包含角色信息的对象
 	 * @return 保存成功后的角色对象（包含生成的ID），保存不成功则返回 null
 	 */
-	public Role save(Role role);
+	public Long save(Role role);
 	
 	
 	/**
@@ -48,9 +48,9 @@ public interface IRoleService {
 	
 	
 	/**
-	 * 按条件查找角色对象，多个条件则要求同时满足
-	 * @param role 包含查询条件的角色对象
-	 * @return 符合条件的角色对象，没有符合条件则返回 null
+	 * 按条件查找角色对象的数量
+	 * @param page 分页对象
+	 * @return 符合条件的角色对象的数量
 	 */
-	public Role findByCond(Role cond); 
+	public int findByCount(Page page); 
 }

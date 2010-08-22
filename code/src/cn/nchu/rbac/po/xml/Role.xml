@@ -7,25 +7,30 @@
 <sqlMap namespace="Role">
 
 	<typeAlias alias="role" type="cn.nchu.rbac.po.Role" />
-	<typeAlias alias="page" type="cn.nchu.rbac.base.Page" />
+	<typeAlias alias="page" type="cn.nchu.rbac.util.Page" />
 
-	<parameterMap class="role" id="role_info">
-		 <parameter property="id" javaType="long" jdbcType="NUMERIC" />
-		<parameter property="role_name" javaType="string" jdbcType="VARCHAR" />
-		<parameter property="create_time" javaType="date" jdbcType="DATETIME" />
-		<parameter property="isvalid" javaType="int" jdbcType="INT" />
+	<parameterMap class="role" id="role_info_without_id">
+		<parameter property="roleName" javaType="string" jdbcType="VARCHAR" />
+		<parameter property="createTime" javaType="date" jdbcType="DATETIME" />
+		<parameter property="isValid" javaType="int" jdbcType="INT" />
 	</parameterMap>
 	
   <!-- 增加一个用户 -->
-	<insert id="save" parameterMap="role_info">
+	<insert id="save" parameterMap="role_info_without_id">
 		<![CDATA[
 			INSERT INTO trole 
-						(id,role_name,create_time,isvalid) 
-				     VALUES (?,?,?,?)
+						(roleName,createTime,isValid) 
+				     VALUES (?,?,?)
 		
 		]]>
+		
+		<selectKey resultClass="long">
+			<![CDATA[
+				SELECT @@IDENTITY AS ID
+			]]>
+		</selectKey>
 	
-
+	</insert>
 	<!-- 根据ID号删除用户 -->
 	<delete id="deleteById" parameterClass="long">
 		<![CDATA[
@@ -42,26 +47,21 @@
 			UPDATE trole
 		]]>
 		<dynamic prepend="SET">
-			<isNotNull property="id" prepend=",">
+			<isNotNull property="roleName" prepend=",">
 				<![CDATA[
-					id = #id:NUMERIC#
+					roleName = #roleName:VARCHAR#
 				]]>
 			</isNotNull>
-			<isNotNull property="role_name" prepend=",">
+			<isNotNull property="createTime" prepend=",">
 				<![CDATA[
-					role_name = #role_name:VARCHAR#
+					createTime = #createTime:DATETIME#
 				]]>
 			</isNotNull>
-			<isNotNull property="create_time" prepend=",">
+			<isNotEqual property="isValid" compareValue="0" prepend=",">
 				<![CDATA[
-					create_time = #create_time:DATETIME#
+					isValid = #isValid:NUMBER#
 				]]>
-			</isNotNull>
-			<isNotNull property="isvalid" prepend=",">
-				<![CDATA[
-					isvalid = #isvalid:NUMBER#
-				]]>
-			</isNotNull>
+			</isNotEqual>
 			</dynamic>
 		<dynamic prepend="WHERE">
 			id = #id:NUMERIC#
@@ -76,9 +76,8 @@
 			<iterate property="conditions" open="(" close=")" conjunction="OR">
 				<![CDATA[
 					upper(id) LIKE '%' + upper(#conditions[]:NUMERIC#) + '%'
-				    OR upper(role_name) LIKE '%' + upper(#conditions[]:VARCHAR#) + '%'    
-				    OR upper(create_time) LIKE '%' + upper(#conditions[]:DATETIME#) + '%'    
-				    OR upper(isvalid) LIKE '%' + upper(#conditions[]:NUMBER#) + '%'    
+				    OR upper(roleName) LIKE '%' + upper(#conditions[]:VARCHAR#) + '%'    
+				    OR upper(isValid) LIKE '%' + upper(#conditions[]:NUMBER#) + '%'    
 				]]>
 			</iterate>
 		</isNotEmpty>
@@ -103,7 +102,7 @@
 		]]>
 	</select>
 
-	<select id="findByCond" parameterClass="page" resultClass="int">
+	<select id="findByCount" parameterClass="page" resultClass="int">
 		<![CDATA[
 			SELECT COUNT(*) FROM trole 
 		]]>
@@ -120,14 +119,14 @@
 			<isNotNull property="id" prepend="AND">
 				id = #id:NUMERIC#
 			</isNotNull>
-			<isNotNull property="role_name" prepend="AND">
-				role_name LIKE '%' + #role_name:VARCHAR# + '%'
+			<isNotNull property="roleName" prepend="AND">
+				roleName LIKE '%' + #roleName:VARCHAR# + '%'
 			</isNotNull>
-			<isNotNull property="create_time" prepend="AND">
-				create_time LIKE '%' + #create_time:DATETIME# + '%'
+			<isNotNull property="createTime" prepend="AND">
+				createTime LIKE '%' + #createTime:DATETIME# + '%'
 			</isNotNull>
-			<isNotNull property="isvalid" prepend="AND">
-				isvalid = #isvalid:NUMBER#
+			<isNotNull property="isValid" prepend="AND">
+				isValid = #isValid:NUMBER#
 			</isNotNull>
 			
 		</dynamic>

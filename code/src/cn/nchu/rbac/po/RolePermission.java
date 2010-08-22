@@ -1,40 +1,60 @@
 package cn.nchu.rbac.po;
 
-public class RolePermission {
+import java.io.Serializable;
 
-	/* 内部编号 */
-	private long id = 0;
+@SuppressWarnings("serial")
+public class RolePermission implements Serializable {
 
-	/* 角色编号 */
-	private long roleId = 0;
+	private Long id  = null;
+	
+	private Long roleId = null;
+	
+	private Long permId = null;
+	
+	private String permName = null;
+	
+	private String url = null;
 
-	/* 权限编号 */
-	private long permId = 0;
-
-	public long getId() {
+	
+	public Long getId() {
 		return id;
 	}
 
-	public void setId(long id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 
-	public long getRoleId() {
+	public Long getRoleId() {
 		return roleId;
 	}
 
-	public void setRoleId(long roleId) {
+	public void setRoleId(Long roleId) {
 		this.roleId = roleId;
 	}
 
-	public long getPermId() {
+	public Long getPermId() {
 		return permId;
 	}
 
-	public void setPermId(long permId) {
+	public void setPermId(Long permId) {
 		this.permId = permId;
 	}
 
-	
+	public String getPermName() {
+		return permName;
+	}
 
+	public void setPermName(String permName) {
+		this.permName = permName;
+	}
+
+	public String getUrl() {
+		return url;
+	}
+
+	public void setUrl(String url) {
+		this.url = url;
+	}
+	
+	
 }

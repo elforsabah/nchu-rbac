@@ -7,24 +7,28 @@
 <sqlMap namespace="Perm">
 
 	<typeAlias alias="perm" type="cn.nchu.rbac.po.Permission" />
-	<typeAlias alias="page" type="cn.nchu.rbac.base.Page" />
+	<typeAlias alias="page" type="cn.nchu.rbac.util.Page" />
 
-	<parameterMap class="role" id="perm_info">
-		<parameter property="id" javaType="long" jdbcType="NUMERIC" />
-		<parameter property="perm_name" javaType="string" jdbcType="VARCHAR" />
-		<parameter property="url" javaType="date" jdbcType="VARCHAR" />
+	<parameterMap class="perm" id="perm_info_without_id">
+		<parameter property="permName" javaType="string" jdbcType="VARCHAR" />
+		<parameter property="url" javaType="string" jdbcType="VARCHAR" />
 		<parameter property="isvalid" javaType="int" jdbcType="INT" />
 	</parameterMap>
 	
-  <!-- 增加一个用户 -->
-	<insert id="save" parameterMap="perm_info">
+  <!-- 增加一个权限 -->
+	<insert id="save" parameterMap="perm_info_without_id">
 		<![CDATA[
 			INSERT INTO tpermission
-						(id,perm_name,url,isvalid) 
-				     VALUES (?,?,?,?)
+						(permName,url,isvalid) 
+				     VALUES (?,?,?)
 		
 		]]>
-	
+		<selectKey resultClass="long">
+			<![CDATA[
+				SELECT @@IDENTITY AS ID
+			]]>
+		</selectKey>
+	</insert>
 
 	<!-- 根据ID号删除用户 -->
 	<delete id="deleteById" parameterClass="long">
@@ -42,14 +46,9 @@
 			UPDATE tpermission
 		]]>
 		<dynamic prepend="SET">
-			<isNotNull property="id" prepend=",">
+			<isNotNull property="permName" prepend=",">
 				<![CDATA[
-					id = #id:NUMERIC#
-				]]>
-			</isNotNull>
-			<isNotNull property="perm_name" prepend=",">
-				<![CDATA[
-					perm_name = #perm_name:VARCHAR#
+					permName = #permName:VARCHAR#
 				]]>
 			</isNotNull>
 			<isNotNull property="url" prepend=",">
@@ -57,11 +56,11 @@
 					url = #url:VARCHAR#
 				]]>
 			</isNotNull>
-			<isNotNull property="isvalid" prepend=",">
+			<isNotEqual property="isvalid" compareValue="0" prepend=",">
 				<![CDATA[
 					isvalid = #isvalid:NUMBER#
 				]]>
-			</isNotNull>
+			</isNotEqual>
 			</dynamic>
 		<dynamic prepend="WHERE">
 			id = #id:NUMERIC#
@@ -76,7 +75,7 @@
 			<iterate property="conditions" open="(" close=")" conjunction="OR">
 				<![CDATA[
 					upper(id) LIKE '%' + upper(#conditions[]:NUMERIC#) + '%'
-				    OR upper(perm_name) LIKE '%' + upper(#conditions[]:VARCHAR#) + '%'    
+				    OR upper(permName) LIKE '%' + upper(#conditions[]:VARCHAR#) + '%'    
 				    OR upper(url) LIKE '%' + upper(#conditions[]:VARCHAR#) + '%'    
 				    OR upper(isvalid) LIKE '%' + upper(#conditions[]:NUMBER#) + '%'    
 				]]>
@@ -103,7 +102,7 @@
 		]]>
 	</select>
 
-	<select id="findByCond" parameterClass="page" resultClass="int">
+	<select id="findByCount" parameterClass="page" resultClass="int">
 		<![CDATA[
 			SELECT COUNT(*) FROM tpermission 
 		]]>
@@ -120,8 +119,8 @@
 			<isNotNull property="id" prepend="AND">
 				id = #id:NUMERIC#
 			</isNotNull>
-			<isNotNull property="perm_name" prepend="AND">
-				perm_name LIKE '%' + #role_name:VARCHAR# + '%'
+			<isNotNull property="permName" prepend="AND">
+				permName LIKE '%' + #permName:VARCHAR# + '%'
 			</isNotNull>
 			<isNotNull property="url" prepend="AND">
 				url LIKE '%' + #url:VARCHAR# + '%'

@@ -7,7 +7,7 @@
 <sqlMap namespace="UserRole">
 
 	<typeAlias alias="userRole" type="cn.nchu.rbac.po.UserRole" />
-	<typeAlias alias="page" type="cn.nchu.rbacbase.Page" />
+	<typeAlias alias="page" type="cn.nchu.rbac.util.Page" />
 
 	<parameterMap class="userRole" id="userRole_info">
 		<parameter property="id" javaType="long" jdbcType="NUMERIC" />

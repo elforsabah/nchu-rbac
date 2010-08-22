@@ -2,9 +2,10 @@ package cn.nchu.rbac.dao.impl;
 
 import java.util.List;
 
-import cn.nchu.rbac.base.Page;
 import cn.nchu.rbac.dao.IPermissionDao;
 import cn.nchu.rbac.po.Permission;
+import cn.nchu.rbac.util.Page;
+
 import org.springframework.orm.ibatis.support.SqlMapClientDaoSupport;
 
 @SuppressWarnings("unchecked")
@@ -16,16 +17,15 @@ public class PermissionDao extends SqlMapClientDaoSupport implements IPermission
 		return getSqlMapClientTemplate().delete("Perm.deleteById", permId);
 	}
 
-	@Override
-	public Permission findByCond(Permission cond) {
-		
-		return (Permission) getSqlMapClientTemplate().queryForList("Perm.findByCond",cond);
+	public int findByCount(Page page) {
+		return (Integer) getSqlMapClientTemplate().queryForObject("Perm.findByCount", page);
 	}
+
 
 	@Override
 	public List findByPage(Page page) {
-		
-		return getSqlMapClientTemplate().queryForList("Perm.findByPage", page);
+		List list = getSqlMapClientTemplate().queryForList("Perm.findByPage", page);
+		return list;
 	}
 
 
@@ -36,15 +36,17 @@ public class PermissionDao extends SqlMapClientDaoSupport implements IPermission
 	}
 
 	@Override
-	public Permission save(Permission perm) {
+	public Long save(Permission perm) {
 		
-		return (Permission) getSqlMapClientTemplate().insert("Perm.save", perm);
+		return (Long) getSqlMapClientTemplate().insert("Perm.save", perm);
 	}
 
 	@Override
 	public Integer update(Permission perm) {
-		
+		try {
 		return getSqlMapClientTemplate().update("Perm.update", perm);
+		} catch (Exception e ) {e.printStackTrace();}
+		return null;
 	}
 
 }
