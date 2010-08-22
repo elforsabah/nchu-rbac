@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMap      
+    PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"      
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="RolePermission">
+
+	<typeAlias alias="rolePermission" type="cn.nchu.rbac.po.RolePermission" />
+	<typeAlias alias="page" type="cn.nchu.rbacbase.Page" />
+
+	<parameterMap class="rolePermission" id="RolePermission_info">
+		<parameter property="id" javaType="long" jdbcType="NUMERIC" />
+		<parameter property="role_id" javaType="long" jdbcType="NUMERIC" />
+		<parameter property="perm_id" javaType="long" jdbcType="NUMERIC" />
+		
+	</parameterMap>
+	<sql id="byRolePerIdCondition">
+		<![CDATA[
+		  id = #id:NUMERIC#
+	    ]]>
+	</sql>
+
+	<insert id="save" parameterMap="RolePermission_info">
+		<![CDATA[
+			INSERT INTO trole_permission
+						(id,role_id,perm_id) 
+				 VALUES (?,?,?)
+		]]>
+	</insert>
+
+	<delete id="deleteById" parameterClass="NUMERIC">
+		<![CDATA[
+			delete trole_permission
+		]]>
+		<dynamic prepend="WHERE">
+			<include refid="byRolePerIdCondition" />
+		</dynamic>
+	</delete>
+
+	<update id="update" parameterClass="rolePermission">
+		<![CDATA[
+			UPDATE trole_permission
+		]]>
+		<dynamic prepend="SET">
+			<isNotNull property="id" prepend=",">
+				<![CDATA[
+					id = #id:NUMERIC#
+				]]>
+			</isNotNull>
+			<isNotNull property="role_id" prepend=",">
+				<![CDATA[
+					role_id = #role_id:NUMERIC#
+				]]>
+			</isNotNull>
+			<isNotNull property="perm_id" prepend=",">
+				<![CDATA[
+					perm_id = #perm_id:NUMERIC#
+				]]>
+			</isNotNull>
+			
+		</dynamic>
+		<dynamic prepend="WHERE">
+			<include refid="byRolePerIdCondition" />
+		</dynamic>
+	</update>
+	<sql id="findRolePerByPageCondition">
+		<isNotNull property="objCondition">
+			<![CDATA[
+				id = #objCondition.id:NUMERIC#
+		    ]]>
+		</isNotNull>
+	</sql>
+
+	<select id="findByPage" parameterClass="page" resultClass="rolePermission">
+		<![CDATA[
+			SELECT TOP $limit$ * FROM tuser_role 
+					WHERE (id >= (SELECT MAX(id) FROM (SELECT TOP $start$ id FROM tuser_role 
+		]]>
+		<dynamic prepend="WHERE">
+			<include refid="findRolePerByPageCondition" />
+		</dynamic>
+		<![CDATA[
+			ORDER BY logId) AS T)) 
+		]]>
+		<dynamic prepend="AND">
+			<include refid="findRolePerByPageCondition" />
+		</dynamic>
+		<![CDATA[
+			ORDER BY id
+		]]>
+	</select>
+
+	<select id="findByCount" parameterClass="page" resultClass="int">
+		<![CDATA[
+			SELECT COUNT(*) FROM trole_permission 
+		]]>
+		<dynamic prepend="WHERE">
+			<include refid="findRolePerByPageCondition" />
+		</dynamic>
+	</select>
+
+</sqlMap>
