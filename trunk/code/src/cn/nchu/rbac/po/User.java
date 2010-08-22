@@ -1,8 +1,10 @@
 package cn.nchu.rbac.po;
 
+import java.io.Serializable;
 import java.sql.Date;
 
-public class User {
+@SuppressWarnings("serial")
+public class User implements Serializable {
 
 	/* 用户编号 */
 	private long id = 0;
@@ -14,17 +16,17 @@ public class User {
 	private String password = null;
 
 	/* 用户创建日期 */
-	private Date create_time = null;
-
+	private Date createTime = null;
+	
 	/* 用户状态 0 – 有效，1 – 删除，2 – 暂时停用 */
-	private int isvalid = 0;
+	private int isValid = 0;
 
-	public int getIsvalid() {
-		return isvalid;
+	public int getIsValid() {
+		return isValid;
 	}
 
-	public void setIsvalid(int isvalid) {
-		this.isvalid = isvalid;
+	public void setIsvalid(int isValid) {
+		this.isValid = isValid;
 	}
 
 	public void setId(long id) {
@@ -55,12 +57,12 @@ public class User {
 		this.password = password;
 	}
 
-	public Date getCreate_time() {
-		return create_time;
+	public Date getCreateTime() {
+		return createTime;
 	}
 
 	public void setCreate_time(Date createTime) {
-		create_time = createTime;
+		this.createTime = createTime;
 	}
 
 }

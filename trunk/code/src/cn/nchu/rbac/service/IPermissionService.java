@@ -2,17 +2,17 @@ package cn.nchu.rbac.service;
 
 import java.util.List;
 
-import cn.nchu.rbac.base.Page;
 import cn.nchu.rbac.po.Permission;
+import cn.nchu.rbac.util.Page;
 
 public interface IPermissionService {
 
 	/**
 	 * 保存权限对象
 	 * @param perm 包含权限信息的权限对象
-	 * @return 保存后的权限对象（包含生成的ID），保存不成功则返回 null
+	 * @return 保存后的权限ID
 	 */
-	public Permission save(Permission perm);
+	public Long save(Permission perm);
 	
 	
 	/**
@@ -48,9 +48,9 @@ public interface IPermissionService {
 	
 	
 	/**
-	 * 按条件查找权限对象，多个条件则要求同时满足
-	 * @param perm 包含查询条件的权限对象
-	 * @return 符合条件的权限对象，没有符合条件则返回 null
+	 * 按条件查找权限对象的数量
+	 * @param page 分页对象
+	 * @return 符合条件的权限对象的数量
 	 */
-	public Permission findByCond(Permission cond); 
+	public int findByCount(Page page); 
 }

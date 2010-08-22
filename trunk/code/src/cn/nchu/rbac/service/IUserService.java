@@ -2,8 +2,8 @@ package cn.nchu.rbac.service;
 
 import java.util.List;
 
-import cn.nchu.rbac.base.Page;
 import cn.nchu.rbac.po.User;
+import cn.nchu.rbac.util.Page;
 import cn.nchu.rbac.util.WebException;
 
 public interface IUserService {
@@ -13,7 +13,7 @@ public interface IUserService {
 	 * @param user	用户对象
 	 * @return 保存后的用户对象（包含生成的ID），如果保存失败则返回 null
 	 */
-	public Object save(User user);
+	public Long save(User user);
 	
 	
 	/**
@@ -58,12 +58,27 @@ public interface IUserService {
 	
 	
 	/**
+	 * 得到满足条件的用户数量
+	 * @param page 分页对象
+	 * @return 数量
+	 */
+	public int findByCount(Page page);
+	
+	
+	/**
 	 * 根据条件查找用户，多个条件则要求同时满足
 	 * @param user 包含查找条件的 user 对象
 	 * @return 返回满足条件的第一个 user 对象，如果没有符合条件就返回 null
 	 */
-	public User findByCond(User user);
+	public List<User> findByExample(User user);
+
 	
+	/**
+	 * 重置用户密码
+	 * @param user	用户对象
+	 * @return true -- 重置成功，false -- 重置失败
+	 */
+	public boolean resetPassword(User user);
 	
 	
 }

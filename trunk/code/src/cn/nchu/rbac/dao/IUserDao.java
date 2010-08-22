@@ -2,8 +2,9 @@ package cn.nchu.rbac.dao;
 
 import java.util.List;
 
-import cn.nchu.rbac.base.Page;
+
 import cn.nchu.rbac.po.User;
+import cn.nchu.rbac.util.Page;
 import cn.nchu.rbac.util.WebException;
 
 public interface IUserDao {
@@ -47,6 +48,14 @@ public interface IUserDao {
 	 */
 	public List<User> list(User user);
 	
+	
+	/**
+	 * 得到满足条件的用户数量
+	 * @param page 分页对象
+	 * @return 用户数量
+	 */
+	public int findByCount(Page page);
+	
 	/**
 	 * 根据条件查找分页后的数据
 	 * @param page
@@ -61,7 +70,14 @@ public interface IUserDao {
 	 * @param user 包含查找条件的 user 对象
 	 * @return 返回满足条件的第一个 user 对象，如果没有符合条件就返回 null
 	 */
-	public List<User> findByCond(User user);
+	public List<User> findByExample(User user);
 	
+	
+	/**
+	 * 重置用户密码
+	 * @param id 待重置密码的用户ID
+	 * @return 重置结果
+	 */
+	public Integer resetPassword(long id);
 	
 }

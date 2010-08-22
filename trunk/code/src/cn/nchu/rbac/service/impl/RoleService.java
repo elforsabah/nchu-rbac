@@ -2,10 +2,10 @@ package cn.nchu.rbac.service.impl;
 
 import java.util.List;
 
-import cn.nchu.rbac.base.Page;
 import cn.nchu.rbac.dao.impl.RoleDao;
 import cn.nchu.rbac.po.Role;
 import cn.nchu.rbac.service.IRoleService;
+import cn.nchu.rbac.util.Page;
 
 public class RoleService implements IRoleService {
 
@@ -20,15 +20,16 @@ public class RoleService implements IRoleService {
 	}
 
 	@Override
-	public Role findByCond(Role cond) {
+	public int findByCount(Page page) {
 		
-		return  roleDao.findByCond(cond);
+		return  roleDao.findByCount(page);
 	}
 
 	@Override
 	public Page findByPage(Page page) {
 		
-		roleDao.findByPage(page);
+		page.setRoot(roleDao.findByPage(page));
+		page.setTotalProperty(roleDao.findByCount(page));
 	    return page;
 	}
 
@@ -39,7 +40,7 @@ public class RoleService implements IRoleService {
 	}
 
 	@Override
-	public Role save(Role role) {
+	public Long save(Role role) {
 		
 		return roleDao.save(role);
 		
@@ -53,6 +54,14 @@ public class RoleService implements IRoleService {
 			return true;
 		}
 		return false;
+	}
+
+	public RoleDao getRoleDao() {
+		return roleDao;
+	}
+
+	public void setRoleDao(RoleDao roleDao) {
+		this.roleDao = roleDao;
 	}
 
 }

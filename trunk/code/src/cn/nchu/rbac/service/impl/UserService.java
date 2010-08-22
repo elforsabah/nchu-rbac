@@ -2,10 +2,10 @@ package cn.nchu.rbac.service.impl;
 
 import java.util.List;
 
-import cn.nchu.rbac.base.Page;
 import cn.nchu.rbac.dao.impl.UserDao;
 import cn.nchu.rbac.po.User;
 import cn.nchu.rbac.service.IUserService;
+import cn.nchu.rbac.util.Page;
 import cn.nchu.rbac.util.WebException;
 
 public class UserService implements IUserService {
@@ -23,14 +23,14 @@ public class UserService implements IUserService {
 	}
 
 	@Override
-	public User findByCond(User user) {
-		// TODO Auto-generated method stub
-		return (User) userDao.findByCond(user);
+	public List<User> findByExample(User user) {
+		return userDao.findByExample(user);
 	}
 
 	@Override
 	public Page findByPage(Page page) {
-		userDao.findByPage(page);
+		page.setRoot(userDao.findByPage(page));
+		page.setTotalProperty(userDao.findByCount(page));
 	    return page;
 	}
 
@@ -47,7 +47,7 @@ public class UserService implements IUserService {
 	}
 
 	@Override
-	public Object save(User user) {
+	public Long save(User user) {
 		
 		return userDao.save(user);
 	}
@@ -59,6 +59,35 @@ public class UserService implements IUserService {
 			return true;
 		}
 		return false;
+	}
+
+	public UserDao getUserDao() {
+		return userDao;
+	}
+
+	public void setUserDao(UserDao userDao) {
+		this.userDao = userDao;
+	}
+
+	@Override
+	public int findByCount(Page page) {
+		return userDao.findByCount(page);
+	}
+
+	@Override
+	public boolean resetPassword(User user) {
+		System.out.println("---------------in service ");
+		Integer flag = null;
+		try {
+		userDao.resetPassword(user.getId());
+		} catch (Exception e ) {
+			e.printStackTrace();
+		}
+		if (flag != null) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 }

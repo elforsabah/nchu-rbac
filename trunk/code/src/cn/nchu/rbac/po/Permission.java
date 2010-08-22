@@ -1,13 +1,16 @@
 package cn.nchu.rbac.po;
 
-public class Permission {
+import java.io.Serializable;
+
+@SuppressWarnings("serial")
+public class Permission implements Serializable {
 
 	/* 权限编号 */
 	private long id = 0;
 
 	/* 权限名 */
-	private String perm_name = null;
-
+	private String permName = null;
+	
 	/* 操作地址 */
 	private String url = null;
 
@@ -22,12 +25,12 @@ public class Permission {
 		this.id = id;
 	}
 
-	public String getPerm_name() {
-		return perm_name;
+	public String getPermName() {
+		return permName;
 	}
 
-	public void setPerm_name(String permName) {
-		perm_name = permName;
+	public void setPermName(String permName) {
+		this.permName = permName;
 	}
 
 	public String getUrl() {
@@ -45,4 +48,5 @@ public class Permission {
 	public void setIsvalid(int isvalid) {
 		this.isvalid = isvalid;
 	}
+
 }
