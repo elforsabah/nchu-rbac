@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMap      
+    PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"      
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="RolePermission">
+
+	<typeAlias alias="rolePermission" type="cn.nchu.rbac.po.RolePermission" />
+	<typeAlias alias="page" type="cn.nchu.rbac.util.Page" />
+
+	<parameterMap class="rolePermission" id="RolePermission_info">
+		<parameter property="id" javaType="long" jdbcType="NUMERIC" />
+		<parameter property="roleId" javaType="long" jdbcType="NUMERIC" />
+		<parameter property="permId" javaType="long" jdbcType="NUMERIC" />
+		<parameter property="permName" javaType="string" jdbcType="VARCHAR" />
+		<parameter property="url" javaType="string" jdbcType="VARCHAR" />
+		
+	</parameterMap>
+	<sql id="byRolePerIdCondition">
+		<![CDATA[
+		  id = #id:NUMERIC#
+	    ]]>
+	</sql>
+
+	<insert id="save" parameterMap="RolePermission_info">
+		<![CDATA[
+			INSERT INTO trole_permission
+						(roleId, permId) 
+				 VALUES (?,?)
+		]]>
+		
+		<selectKey resultClass="long">
+			<![CDATA[
+				SELECT @@IDENTITY AS ID
+			]]>
+		</selectKey>
+	</insert>
+
+	<delete id="deleteById">
+		<![CDATA[
+			delete trole_permission where id = #id:NUMERIC#
+		]]>
+	</delete>
+
+	<sql id="findRolePerByPageCondition">
+		
+	</sql>
+
+	<select id="findByPage" parameterClass="page" resultClass="rolePermission">
+		<![CDATA[
+			SELECT TOP $limit$ * FROM tuser_role 
+					WHERE (id >= (SELECT MAX(id) FROM (SELECT TOP $start$ id FROM tuser_role 
+		]]>
+		<dynamic prepend="WHERE">
+			<include refid="findRolePerByPageCondition" />
+		</dynamic>
+		<![CDATA[
+			ORDER BY id) AS T)) 
+		]]>
+		<dynamic prepend="AND">
+			<include refid="findRolePerByPageCondition" />
+		</dynamic>
+		<![CDATA[
+			ORDER BY id
+		]]>
+	</select>
+
+	<select id="findByCount" resultClass="int">
+		<![CDATA[
+			SELECT COUNT(*) FROM trole_permission rp 
+				INNER JOIN tpermission p ON rp.permId = p.id 
+				WHERE p.isvalid = 1 AND roleId = #roleId:NUMERIC#
+		]]>
+		<dynamic prepend="WHERE">
+			<include refid="findRolePerByPageCondition" />
+		</dynamic>
+	</select>
+	
+	<select id="findPermByRole" resultClass="rolePermission">
+		<![CDATA[
+			SELECT rp.id, permId, roleId, permName, url FROM trole_permission rp 
+				INNER JOIN tpermission p ON rp.permId = p.id 
+				WHERE p.isvalid = 1 AND roleId = #roleId:NUMERIC#
+		]]>
+	</select>
+
+</sqlMap>
