@@ -1,0 +1,1 @@
+A simple implementation of rbac 1.0 model with Java EE.
